@@ -17,7 +17,7 @@ Los métodos son funciones que definen los comportamientos o acciones que puede 
 //Creacion de una clase
 
 //Para crear una clase, defina sus miembros: propiedades, un elemento constructor, descriptores de acceso y métodos.
-class Car {
+class Car5 {
   // Properties
   // Constructor
   // Accessors
@@ -27,7 +27,7 @@ class Car {
 // Declaración de las propiedades de clase
 // Puede pensar en las propiedades de una clase como los datos sin procesar que se pasan al objeto cuando se inicializa.
 
-class Car2 {
+class Car4 {
   // Properties
   //  _make: string;
   // _color: string;
@@ -61,7 +61,7 @@ class Car3 {
 
 // TypeScript admite captadores y establecedores como una forma de interceptar el acceso a una propiedad.
 
-class Car4 {
+class Car2 {
   // Properties
   _make: string;
   _color: string;
@@ -105,7 +105,7 @@ class Car4 {
 
 //Puede definir cualquier función de TypeScript dentro de una clase y llamarla como un método en el objeto o desde otras funciones dentro de la clase. Estos miembros de la clase describen los comportamientos que su clase puede realizar y pueden realizar cualquier otra tarea requerida por la clase.
 
-class Car5 {
+class Car {
   // Properties
   _make: string;
   _color: string;
@@ -157,3 +157,99 @@ class Car5 {
     return this._make;
   }
 }
+
+//Creación de instancias de una clase
+
+//1.Debajo de la declaración de clase, declare una variable denominada myCar1 y asígnele un nuevo objeto Car, pasando valores para los parámetros make, color y doors (asegúrese de que el parámetro doors tiene asignado un número par).
+
+let myCar1 = new Car("Cool Car Company", "blue", 2); // Instantiates the Car object with all parameters
+
+//2. Puede tener acceso a las propiedades del nuevo objeto myCar1.
+console.log(myCar1.color);
+console.log(myCar1._color);
+
+//3. El miembro _color representa la propiedad definida en la clase, mientras que color es el parámetro que se pasa al constructor. Cuando se hace referencia a _color, se obtiene acceso a los datos sin procesar de la propiedad, que devuelve 'blue'. Cuando se hace referencia a color, se obtiene acceso a la propiedad a través del descriptor de acceso get o set, que devuelve 'The color of the car is blue'. Es importante comprender la diferencia entre los dos porque a menudo no se quiere permitir el acceso directo a la propiedad sin hacer alguna validación u otro trabajo en los datos antes de obtenerlos o establecerlos. Aprenderá a usar modificadores de acceso para controlar la visibilidad de los miembros de la clase más adelante en la unidad.
+
+//4. Recuerde que el bloque set del parámetro doors comprueba el valor para determinar si es par o impar. Para probarlo, declare una variable denominada myCar2 y asígnele un nuevo objeto Car, pasando valores para los parámetros make, color y doors. Esta vez, establezca el valor del parámetro doors en un número impar. Ahora, seleccione Ejecutar. ¿Qué sucede? ¿Por qué?
+
+let myCar2 = new Car("Galaxy Motors", "red", 3);
+
+//5. Aunque se pasó un número impar a doors, se compila y se ejecuta sin errores porque no se realiza ninguna validación de datos en constructor. Pruebe a establecer el valor de doors en otro número impar (por ejemplo, myCar2.doors = 5) y pruébelo. Así, se debería invocar al bloque set y producirse un error. Si desea realizar este paso de validación cuando se inicializa el objeto Car, debe agregar una comprobación de validación a constructor.
+
+// constructor(make: string, color: string, doors = 4) {
+//     this._make = make;
+//     this._color = color;
+//     if ((doors % 2) === 0) {
+//         this._doors = doors;
+//     } else {
+//         throw new Error('Doors must be an even number');
+//     }
+// }
+
+class Car6 {
+  // Properties
+  _make: string;
+  _color: string;
+  _doors: number;
+  // Constructor
+  constructor(make: string, color: string, doors = 4) {
+    this._make = make;
+    this._color = color;
+    if (doors % 2 === 0) {
+      this._doors = doors;
+    } else {
+      throw new Error("Doors must be an even number");
+    }
+  }
+  // Accessors
+  get make() {
+    return this._make;
+  }
+
+  set make(make) {
+    this._make = make;
+  }
+
+  get color() {
+    return "The color of the car is " + this._color;
+  }
+  set color(color) {
+    this._color = color;
+  }
+
+  get doors() {
+    return this._doors;
+  }
+  set doors(doors) {
+    if (doors % 2 === 0) {
+      this._doors = doors;
+    } else {
+      throw new Error("Doors must be an even number");
+    }
+  }
+  // Methods
+  accelerate(speed: number): string {
+    return `${this.worker()} is accelerating to ${speed} MPH.`;
+  }
+  brake(): string {
+    return `${this.worker()} is braking with the standard braking system.`;
+  }
+  turn(direction: "left" | "right"): string {
+    return `${this.worker()} is turning ${direction}`;
+  }
+  // This function performs work for the other method functions
+  worker(): string {
+    return this._make;
+  }
+}
+
+//Pruebe el parámetro opcional doors omitiéndolo en la inicialización del objeto.
+
+let myCar3 = new Car6("Galaxy Motors", "gray");
+console.log(myCar3.doors); // returns 4, the default value
+
+// 7. Pruebe los métodos enviando los valores devueltos a la consola.
+
+console.log(myCar1.accelerate(35));
+console.log(myCar1.brake());
+console.log(myCar1.turn("right"));
