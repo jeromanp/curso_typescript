@@ -29,9 +29,9 @@ class Car5 {
 
 class Car4 {
   // Properties
-  //  _make: string;
-  // _color: string;
-  // _doors: number;
+   _make: string;
+  _color: string;
+  _doors: number;
   // Constructor
   // Accessors
   // Methods
