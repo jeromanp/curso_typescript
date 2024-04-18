@@ -190,6 +190,167 @@ console.log(stringValue);       // Returns 100100
 
 ## Ejercicio: Implementación de genéricos con interfaces y clases
 
+Los genéricos son una forma de pasar tipos a un componente, por lo que no solo se pueden aplicar tipos nativos a variables de tipo genérico, sino también a interfaces, funciones y clases. En esta unidad, conocerá varias maneras diferentes de usar genéricos con estos tipos complejos.
+
+Pruebe a usar genéricos con interfaces, funciones y clases. Todos códigos de ejemplo llevan a cabo esencialmente las mismas tareas con distintos enfoques.
+
+### Declaración de una interfaz genérica
+
+1. Declare una interfaz simple denominada Identity que tenga dos propiedades, value y message, y dos variables de tipo genérico, T y U, para los tipos de las propiedades.
+
+```ts:
+interface Identity<T, U> {
+  value: T;
+  message: U;
+}
+```
+
+2. Declare dos variables usando la interfaz Identity como un tipo de objeto.
+
+```ts:
+let returnNumber: Identity<number, string> = {
+  value: 25,
+  message: 'Hello!'
+}
+let returnString: Identity<string, number> = {
+  value: 'Hello!',
+  message: 25
+}
+```
+
+### Declaración de una interfaz genérica como un tipo de función
+
+1. Declare una interfaz genérica denominada ProcessIdentity que incluya la signatura genérica de un método, (value: T, message: U): T. Observe que el método no tiene nombre. De esta manera, puede aplicarlo a cualquier función con una signatura de tipo coincidente.
+
+```ts:
+interface ProcessIdentity<T, U> {
+  (value: T, message: U): T;
+}
+```
+
+2. Declare una función llamada processIdentity que tenga la misma signatura de tipo que la interfaz ProcessIdentity.
+
+```ts:
+function processIdentity<T, U> (value: T, message: U) : T {
+  console.log(message);
+  return value
+}
+```
+
+3. Declare una variable de tipo de función denominada processor con la interfaz ProcessIdentity como el tipo de variable, y pase number para el tipo T y string para el tipo U. Después, asígnele la función processIdentity. Puede usar esta variable como una función en el código y TypeScript comprobará los tipos.
+
+```ts:
+let processor: ProcessIdentity<number, string> = processIdentity;
+let returnNumber1 = processor(100, 'Hello!');   // OK
+let returnString1 = processor('Hello!', 100);   // Type check error
+```
+
+### Declaración de una interfaz genérica como un tipo de clase
+
+1. Declare una interfaz denominada ProcessIdentity que tenga dos propiedades, value y message, y dos variables de tipo genérico, T y U, para los tipos de las propiedades. Después, agregue una signatura genérica de un método denominado process que devuelva un valor del tipo T.
+
+```ts:
+interface ProcessIdentity<T, U> {
+  value: T;
+  message: U;
+  process(): T;
+}
+```
+
+2. Defina una clase genérica denominada processIdentity que implemente la interfaz ProcessIdentity. En este caso, asigne a los tipos de variable de la clase processIdentity los nombres X e Y. Puede usar nombres de variable diferentes en la interfaz y en la clase porque el valor del tipo se propaga y el nombre de la variable no importa.
+
+```ts:
+class processIdentity<X, Y> implements ProcessIdentity<X, Y> {
+  value: X;
+  message: Y;
+  constructor(val: X, msg: Y) {
+      this.value = val;
+      this.message = msg;
+  }
+  process() : X {
+      console.log(this.message);
+      return this.value
+  }
+}
+```
+
+3. Declare una nueva variable y asígnele un nuevo objeto processIdentity; para ello, pase number y string para los tipos de variable X e Y, y number y string como valores de argumento.
+
+```ts:
+let processor = new processIdentity<number, string>(100, 'Hello');
+processor.process();           // Displays 'Hello'
+processor.value = '100';       // Type check error
+```
+
+### Definición de una clase genérica
+
+También puede declarar una clase genérica sin una interfaz. En este ejemplo se declara processIdentity como una clase genérica sin implementar la interfaz ProcessIdentity.
+
+```ts:
+class processIdentity<T, U> {
+  private _value: T;
+  private _message: U;
+  constructor(value: T, message: U) {
+      this._value = value;
+      this._message = message;
+  }
+  getIdentity() : T {
+      console.log(this._message);
+      return this._value
+  }
+}
+```
+
+```ts:
+let processor = new processIdentity<number, string>(100, 'Hello');
+processor.getIdentity();      // Displays 'Hello'
+```
+
+### Implementación de genéricos con tipos y clases personalizados
+
+El uso de genéricos con tipos primitivos (como number, string o boolean) ilustra bien los conceptos de los genéricos, pero resulta más eficaz usarlos con tipos y clases personalizados.
+
+En este ejemplo hay una clase base denominada Car y dos subclases, ElectricCar y Truck. La función accelerate acepta una instancia genérica de Car y, después, la devuelve. Al indicar a la función accelerate que T debe extender Car, TypeScript sabe a qué funciones y propiedades se puede llamar dentro de la función. El genérico también devuelve el tipo específico del objeto "Car" (ElectricCar o Truck) que se pasa a la función, en lugar de un objeto Car no específico.
+
 ```ts:
 
+class Car {
+  make: string = 'Generic Car';
+  doors: number = 4;
+}
+class ElectricCar extends Car {
+  make = 'Electric Car';
+  doors = 4
+}
+class Truck extends Car {
+  make = 'Truck';
+  doors = 2
+}
+function accelerate<T extends Car> (car: T): T {
+  console.log(`All ${car.doors} doors are closed.`);
+  console.log(`The ${car.make} is now accelerating!`)
+  return car
+}
 ```
+
+```ts:
+let myElectricCar = new ElectricCar;
+accelerate<ElectricCar>(myElectricCar);
+let myTruck = new Truck;
+accelerate<Truck>(myTruck);
+```
+
+La salida en la consola es la siguiente:
+
+```ts:
+"All 4 doors are closed."
+"The Electric Car is now accelerating!"
+"All 2 doors are closed."
+"The Truck is now accelerating!"
+```
+
+### Uso de restricciones genéricas con tipos y clases personalizados
+
+Anteriormente en el módulo, ha aprendido a usar restricciones genéricas para limitar los tipos. Las restricciones genéricas no solo se pueden aplicar a tipos nativos, sino también a clases.
+
+Para ello, puede definir una interfaz y usar la palabra clave extend con la variable de tipo para extenderla. En el ejemplo anterior se restringe el tipo T adjuntándole una restricción: T debe extender Car.
